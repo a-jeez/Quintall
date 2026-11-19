@@ -83,7 +83,7 @@
                                     <button type="submit" style="background:none;border:none;padding:0;color:var(--primary);font-weight:600;font-size:12px;margin-right:8px;cursor:pointer;font-family:inherit;">Tandai Selesai</button>
                                 </form>
                             <% } %>
-                            <button type="button" onclick="confirmDelete(<%= i %>)" style="background:none;border:none;padding:0;color:#ef4444;font-size:12px;cursor:pointer;font-family:inherit;">Hapus</button>
+                            <button type="button" class="delete-task-btn" data-task-id="<%= i %>" style="background:none;border:none;padding:0;color:#ef4444;font-size:12px;cursor:pointer;font-family:inherit;">Hapus</button>
                         </td>
                     </tr>
                 <% }); %>
@@ -118,7 +118,7 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="actionModal" onclick="if(event.target===this)closeModal()">
+<div class="modal-overlay" id="actionModal">
     <div class="modal-card">
         <h3 id="modalTitle" style="margin:0 0 8px 0;font-size:16px;">Pemberitahuan</h3>
         <p id="modalText" style="color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 16px 0;"></p>
@@ -127,10 +127,29 @@
 </div>
 
 <script>
+// Event listeners
+document.getElementById('actionModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+document.querySelectorAll('.delete-task-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const taskId = this.getAttribute('data-task-id');
+        confirmDelete(taskId);
+    });
+});
+
 function showModal(title, text, footerHtml) {
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalText').textContent = text;
-    document.getElementById('modalFooter').innerHTML = footerHtml || '<button onclick="closeModal()" style="padding:8px 20px;">Tutup</button>';
+    document.getElementById('modalFooter').innerHTML = footerHtml || '<button type="button" class="close-modal-btn" style="padding:8px 20px;">Tutup</button>';
+    
+    // Add event listener to dynamically created close button
+    const closeBtn = document.querySelector('.close-modal-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
     document.getElementById('actionModal').classList.add('show');
 }
 
@@ -142,8 +161,14 @@ function confirmDelete(id) {
     showModal(
         'Konfirmasi Hapus',
         'Apakah Anda yakin ingin menghapus tugas ini?',
-        `<button onclick="closeModal()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;">Batal</button><form action="/hapus-tugas" method="POST" style="display:inline;"><input type="hidden" name="id" value="${id}"><button type="submit" style="background:#ef4444;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;">Ya, Hapus</button></form>`
+        `<button type="button" class="cancel-delete-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;">Batal</button><form action="/hapus-tugas" method="POST" style="display:inline;"><input type="hidden" name="id" value="${id}"><button type="submit" style="background:#ef4444;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;">Ya, Hapus</button></form>`
     );
+    
+    // Add event listener to cancel button
+    const cancelBtn = document.querySelector('.cancel-delete-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+    }
 }
 
 (function() {

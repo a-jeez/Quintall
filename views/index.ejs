@@ -58,10 +58,10 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
             <div class="dropdown">
-                <button type="button" onclick="toggleMenu()" class="menu-btn" id="menuBtn" aria-label="Menu">⋮</button>
+                <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu">⋮</button>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="https://t.me/quintall_bot" target="_blank" rel="noopener">Bot Telegram</a>
-                    <button type="button" onclick="showInfo()">About</button>
+                    <button type="button" id="showInfoBtn">About</button>
                     <hr style="border:0;border-top:1px solid var(--border);margin:4px 0;">
                     <% if (isLoggedIn) { %>
                         <a href="/tugas">Kelola Panel</a>
@@ -71,7 +71,7 @@
                     <% } %>
                 </div>
             </div>
-            <button type="button" onclick="toggleTheme()" class="menu-btn" id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
+            <button type="button" class="menu-btn" id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
         </div>
     </header>
     <% if (isMaintenance) { %>
@@ -118,9 +118,9 @@
         <h2 style="margin:0 0 14px 0;font-size:15px;display:flex;justify-content:space-between;align-items:center;">
             <span>Tugas Aktif</span>
             <span style="font-size:12px;font-weight:normal;">
-                <a href="/?range=1d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '1d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '1d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">1d</a>
-                <a href="/?range=3d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '3d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '3d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">3d</a>
-                <a href="/?range=7d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '7d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '7d' ? '#fff' : 'var(--text)' %>;">7d</a>
+                <a href="/?range=1d" class="filter-link" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '1d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '1d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">1d</a>
+                <a href="/?range=3d" class="filter-link" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '3d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '3d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">3d</a>
+                <a href="/?range=7d" class="filter-link" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '7d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '7d' ? '#fff' : 'var(--text)' %>;">7d</a>
             </span>
         </h2>
         <table>
@@ -196,9 +196,9 @@
     </footer>
 </div>
 
-<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)closeInfo()">
+<div class="modal-overlay" id="infoModal">
     <div class="modal-card">
-        <button class="modal-close" onclick="closeInfo()">&times;</button>
+        <button class="modal-close" id="closeInfoBtn">&times;</button>
         <h3 style="margin:0 0 6px 0;font-size:18px;">Quintall</h3>
         <p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:16px;">
             Sistem manajemen jadwal kuliah, tugas, dan aktivitas akademik pribadi yang terintegrasi dengan Bot Telegram. Dibuat untuk mempermudah mengelola jadwal kuliah, serta tugas.
@@ -210,6 +210,22 @@
 </div>
 
 <script>
+// Event listeners
+document.getElementById('menuBtn').addEventListener('click', toggleMenu);
+document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+document.getElementById('showInfoBtn').addEventListener('click', showInfo);
+document.getElementById('closeInfoBtn').addEventListener('click', closeInfo);
+document.getElementById('infoModal').addEventListener('click', function(e) {
+    if (e.target === this) closeInfo();
+});
+
+// Filter links with scroll preservation
+document.querySelectorAll('.filter-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        saveScroll();
+    });
+});
+
 function saveScroll() {
     sessionStorage.setItem('scrollPos', window.scrollY);
 }
