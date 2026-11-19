@@ -62,7 +62,17 @@ app.use(helmet({
     },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     xContentTypeOptions: true,
-    xFrameOptions: { action: 'deny' }
+    xFrameOptions: { action: 'deny' },
+    permissionsPolicy: {
+        features: {
+            camera: [],
+            microphone: [],
+            geolocation: [],
+            payment: [],
+            usb: [],
+            'browsing-topics': []
+        }
+    }
 }));
 
 // Security: Rate limiter for login endpoint
