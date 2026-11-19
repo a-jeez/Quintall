@@ -94,7 +94,7 @@ const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 let lastAdminActivity = 'Belum ada sesi';
 let recentMessages = [];
 let isMaintenance = false;
-const rateLimit = new Map();
+const botRateLimit = new Map();
 const RATE_LIMIT_MS = 5000;
 const RATE_LIMIT_COUNT = 3;
 
@@ -109,12 +109,12 @@ function isValidSession(token) {
 
 function checkRateLimit(chatId) {
     const now = Date.now();
-    let record = rateLimit.get(chatId) || { count: 0, reset: now };
+    let record = botRateLimit.get(chatId) || { count: 0, reset: now };
     if (now > record.reset) {
         record = { count: 0, reset: now + RATE_LIMIT_MS };
     }
     record.count++;
-    rateLimit.set(chatId, record);
+    botRateLimit.set(chatId, record);
     return record.count <= RATE_LIMIT_COUNT;
 }
 
