@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quintall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#fff;--surface:#f8fafc;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--primary:#0284c7;--accent:#e0f2fe;}
+        [data-theme="dark"]{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#f8fafc;--muted:#94a3b8;--primary:#38bdf8;--accent:#0369a1;}
+        .theme-btn{background:var(--surface);color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit;}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:40px 20px;}
+        .wrap{max-width:1150px;margin:0 auto;}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:1px solid var(--border);padding-bottom:20px;}
+        h1{margin:0;font-size:20px;font-weight:700;} p{margin:2px 0 0 0;color:var(--muted);font-size:13px;}
+        .badge{background:var(--accent);color:var(--primary);padding:6px 12px;border-radius:20px;font-weight:600;font-size:12px;}
+        [data-theme="dark"] .badge{background:var(--surface);border:1px solid var(--border);color:var(--primary);}
+        .logout-badge{background:#fee2e2;color:#991b1b;padding:6px 12px;border-radius:20px;font-weight:600;font-size:12px;}
+        [data-theme="dark"] .logout-badge{background:var(--surface);border:1px solid var(--border);color:var(--muted);}
+        .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:30px;}
+        .box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;}
+        .box h3{margin:0;font-size:11px;text-transform:uppercase;color:var(--muted);}
+        .box .num{font-size:22px;font-weight:700;margin-top:4px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:30px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        table{width:100%;min-width:600px;border-collapse:collapse;text-align:left;font-size:13px;}
+        td { white-space: nowrap; }
+        th,td{padding:10px 12px;border-bottom:1px solid var(--border);}
+        th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;background:transparent;}
+        tr:last-child td{border-bottom:none;}
+        .tag{background:#e2e8f0;color:#334155;padding:2px 6px;border-radius:4px;font-weight:600;font-size:11px;}
+        [data-theme="dark"] .tag{background:#334155;color:#cbd5e1;}
+        code{background:#f1f5f9;padding:2px 5px;border-radius:4px;border:1px solid var(--border);color:var(--primary);}
+        [data-theme="dark"] code{background:#0f172a;color:var(--primary);}
+        .muted{color:var(--muted);}
+        .row-today { background: #bae6fd !important; }
+        [data-theme="dark"] .row-today { background: #0369a1 !important; color: #fff !important; }
+        footer{text-align:center;color:var(--muted);font-size:11px;border-top:1px solid var(--border);padding-top:16px;}
+        footer span{color:var(--text);font-weight:600;}
+        .dropdown{position:relative;display:inline-block;}
+        .menu-btn{background:var(--surface);color:var(--text);border:1px solid var(--border);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;}
+        .dropdown-menu{display:none;position:absolute;right:0;top:42px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:160px;z-index:100;overflow:hidden;}
+        .dropdown-menu.show{display:block;}
+        .dropdown-menu a,.dropdown-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;text-decoration:none;color:var(--text);border:none;background:none;font-size:13px;font-family:inherit;cursor:pointer;box-sizing:border-box;}
+        .dropdown-menu a:hover,.dropdown-menu button:hover{background:var(--border);}
+        .dropdown-menu .danger{color:#ef4444;}
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.show{display:flex;}
+        .modal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;max-width:400px;width:100%;padding:24px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);position:relative;}
+        .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <div>
+            <h1>Quintall</h1>
+            <p>Academic Operations Controller</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <div class="dropdown">
+                <button onclick="toggleMenu()" class="menu-btn" id="menuBtn" aria-label="Menu">⋮</button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="https://t.me/quintall_bot" target="_blank" rel="noopener">Bot Telegram</a>
+                    <button onclick="showInfo()">About</button>
+                    <hr style="border:0;border-top:1px solid var(--border);margin:4px 0;">
+                    <% if (isLoggedIn) { %>
+                        <a href="/tugas">Kelola Panel</a>
+                        <a href="/logout" class="danger">Logout</a>
+                    <% } else { %>
+                        <a href="/login">Login Admin</a>
+                    <% } %>
+                </div>
+            </div>
+            <button onclick="toggleTheme()" class="menu-btn" id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
+        </div>
+    </header>
+    <% if (isMaintenance) { %>
+        <div style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;line-height:1.4;">
+            <span><strong>PEMBERITAHUAN:</strong> Bot Telegram sedang dalam pemeliharaan sistem.</span>
+        </div>
+    <% } %>
+
+    <div class="grid">
+        <div class="box"><h3>Uptime</h3><div class="num"><%= uptime %></div></div>
+        <div class="box"><h3>Terakhir Diperbarui</h3><div class="num" style="font-size:18px;margin-top:4px;"><%= lastAdminActivity %></div></div>
+        <div class="box"><h3>RAM</h3><div class="num"><%= ram %> MB</div></div>
+    </div>
+
+    <div id="jadwal" class="card">
+        <h2 style="margin:0 0 14px 0;font-size:15px;">Jadwal Kuliah Kelas 3IE</h2>
+        <table>
+            <thead>
+                <tr><th>Hari</th><th>Jam</th><th>Mata Kuliah</th><th>Dosen</th><th>Ruangan</th></tr>
+            </thead>
+            <tbody>
+                <% if (jadwal.length === 0) { %>
+                    <tr>
+                        <td colspan="5" class="muted" style="text-align:center;">Tidak ada jadwal yang tersedia.</td>
+                    </tr>
+                <% } else { %>
+                    <% jadwal.forEach(j => { 
+                        const isToday = j.hari.toLowerCase() === todayName.toLowerCase();
+                    %>
+                        <tr class="<%= isToday ? 'row-today' : '' %>">
+                            <td><span class="tag"><%= j.hari %></span></td>
+                            <td class="muted"><%= j.jam %></td>
+                            <td><strong><%= j.matkul %></strong></td>
+                            <td class="muted"><%= j.dosen %></td>
+                            <td><span class="muted"><%= j.ruang %></span></td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="agenda" class="card">
+        <h2 style="margin:0 0 14px 0;font-size:15px;display:flex;justify-content:space-between;align-items:center;">
+            <span>Tugas Aktif</span>
+            <span style="font-size:12px;font-weight:normal;">
+                <a href="/?range=1d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '1d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '1d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">1d</a>
+                <a href="/?range=3d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '3d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '3d' ? '#fff' : 'var(--text)' %>;margin-right:4px;">3d</a>
+                <a href="/?range=7d" onclick="saveScroll()" style="padding:4px 8px;border-radius:4px;text-decoration:none;background:<%= range === '7d' ? 'var(--primary)' : 'var(--surface)' %>;border:1px solid var(--border);color:<%= range === '7d' ? '#fff' : 'var(--text)' %>;">7d</a>
+            </span>
+        </h2>
+        <table>
+            <thead>
+                <tr><th>Mata Kuliah</th><th>Deskripsi</th><th>Deadline</th></tr>
+            </thead>
+            <tbody>
+                <% if (filteredTasks.length === 0) { %>
+                    <tr><td colspan="3" class="muted" style="text-align:center;">Tidak ada tugas dalam rentang <%= range %>.</td></tr>
+                <% } else { %>
+                    <% 
+                    const now = new Date();
+                    filteredTasks.forEach(t => { 
+                        const deadline = new Date(t.deadline);
+                        const diffMs = deadline - now;
+                        const absDiffMs = Math.abs(diffMs);
+                        const diffMins = Math.floor(absDiffMs / (1000 * 60));
+                        const diffHours = Math.floor(diffMins / 60);
+                        const days = Math.floor(diffHours / 24);
+                        const hours = diffHours % 24;
+                        const mins = diffMins % 60;
+                        
+                        let timeLeft = '';
+                        let isLate = false;
+                        
+                        if (diffMs < 0) {
+                            isLate = true;
+                            if (days > 0) {
+                                timeLeft = `Lewat ${days} hari ${hours} jam`;
+                            } else if (hours > 0) {
+                                timeLeft = `Lewat ${hours} jam ${mins} menit`;
+                            } else {
+                                timeLeft = `Lewat ${mins} menit`;
+                            }
+                        } else if (days > 0) {
+                            timeLeft = `${days} hari ${hours} jam lagi`;
+                        } else if (hours > 0) {
+                            timeLeft = `${hours} jam ${mins} menit lagi`;
+                        } else {
+                            timeLeft = `${mins} menit lagi`;
+                        }
+                    %>
+                        <tr>
+                            <td><span class="tag"><%= t.matkul %></span></td>
+                            <td><%= t.deskripsi %></td>
+                            <td><code style="<%= isLate ? 'color:#dc2626;font-weight:600;' : '' %>"><%= timeLeft %></code></td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="kalender" class="card">
+        <h2 style="margin:0 0 14px 0;font-size:15px;">Kalender Akademik Polsri</h2>
+        <table>
+            <thead>
+                <tr><th>Kegiatan Akademik</th><th>Tanggal</th></tr>
+            </thead>
+            <tbody>
+                <% kalender.forEach(k => { %>
+                    <tr>
+                        <td><strong><%= k.kegiatan %></strong></td>
+                        <td class="muted"><code><%= k.tanggal %></code></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <footer style="font-size:11px; transform: scale(0.9); transform-origin: center;">
+        Dibuat dengan ❤️ oleh <a href="https://wa.me/628136300510" target="_blank" style="color:inherit;text-decoration:none;"><span>Muhammad Abdul Aziz</span></a>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)closeInfo()">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeInfo()">&times;</button>
+        <h3 style="margin:0 0 6px 0;font-size:18px;">Quintall</h3>
+        <p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:16px;">
+            Sistem manajemen jadwal kuliah, tugas, dan aktivitas akademik pribadi yang terintegrasi dengan Bot Telegram. Dibuat untuk mempermudah mengelola jadwal kuliah, serta tugas.
+        </p>
+        <div style="font-size:12px;border-top:1px solid var(--border);padding-top:12px;color:var(--muted);">
+            Dibuat dengan ❤️ oleh <a href="https://docs.stackajiz.site/" target="_blank" style="color:inherit;text-decoration:none;"><strong style="color:var(--text);">Muhammad Abdul Aziz</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+function saveScroll() {
+    sessionStorage.setItem('scrollPos', window.scrollY);
+}
+function toggleMenu() {
+    document.getElementById('dropdownMenu').classList.toggle('show');
+}
+function showInfo() {
+    const m = document.getElementById('dropdownMenu');
+    if (m && m.classList.contains('show')) m.classList.remove('show');
+    document.getElementById('infoModal').classList.add('show');
+}
+function closeInfo() {
+    document.getElementById('infoModal').classList.remove('show');
+}
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+        const m = document.getElementById('dropdownMenu');
+        if (m && m.classList.contains('show')) m.classList.remove('show');
+    }
+});
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    const btn = document.getElementById('themeToggleBtn');
+    if (next === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        if (btn) btn.textContent = '☀️';
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        if (btn) btn.textContent = '🌙';
+    }
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        window.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.textContent = '☀️';
+        });
+    }
+    // Restore scroll position
+    const scrollPos = sessionStorage.getItem('scrollPos');
+    if (scrollPos) {
+        window.scrollTo(0, parseInt(scrollPos));
+        sessionStorage.removeItem('scrollPos');
+    }
+})();
+</script>
+</body>
+</html>

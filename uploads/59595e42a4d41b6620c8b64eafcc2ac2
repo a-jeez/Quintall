@@ -1,0 +1,13 @@
+  { "hari": "Senin", "jam": "12:40 - 15:10", "matkul": "Pemrograman Web", "dosen": "Nurul Ilma Hasana Kunio, S.Kom., M.Kom", "ruang": "Lab.6 Lt. 2 MI" },
+  { "hari": "Senin", "jam": "15:40 - 18:10", "matkul": "Pemrograman Berorientasi Objek", "dosen": "Ahmad Ari Gunawan Sepriansyah, S.Kom.,M.Kom", "ruang": "Lab.5 Lt. 2 MI" },
+  { "hari": "Selasa", "jam": "12:40 - 15:10", "matkul": "Statistik dan Probabilitas", "dosen": "Dr. Delta Khairunnisa, S.E., M.Si.", "ruang": "Lab.5 Lt. 2 MI" },
+  { "hari": "Selasa", "jam": "15:40 - 18:10", "matkul": "Pemrograman Python", "dosen": "Indra Griha Tofik Isa, S.T.,M.Kom", "ruang": "Lab.6 Lt. 2 MI" },
+  { "hari": "Rabu", "jam": "12:40 - 14:20", "matkul": "Statistik dan Probabilitas", "dosen": "Dr. Delta Khairunnisa, S.E., M.Si.", "ruang": "Teori 3 Lt. 2 B.Inggris" },
+  { "hari": "Rabu", "jam": "14:20 - 15:10", "matkul": "Pemrograman Mobile", "dosen": "Kurniati, M.Kom.", "ruang": "Teori 3 Lt. 2 B.Inggris" },
+  { "hari": "Rabu", "jam": "15:40 - 16:30", "matkul": "Pemrograman Berorientasi Objek", "dosen": "Ahmad Ari Gunawan Sepriansyah, S.Kom.,M.Kom", "ruang": "Teori 3 Lt. 2 B.Inggris" },
+  { "hari": "Rabu", "jam": "16:30 - 18:10", "matkul": "Pendidikan Kewarganegaraan", "dosen": "Deri Darfin, S.Sos., M.Si", "ruang": "Teori 3 Lt. 2 B.Inggris" },
+  { "hari": "Kamis", "jam": "12:40 - 15:10", "matkul": "Pemrograman Mobile", "dosen": "Kurniati, M.Kom.", "ruang": "Lab.5 Lt. 2 MI" },
+  { "hari": "Kamis", "jam": "15:40 - 18:10", "matkul": "Sistem Informasi Manajemen Perusahaan", "dosen": "Ade Sukma Wati, S.Kom., M.Kom.", "ruang": "Teori 3 Lt. 1 MI" },
+  { "hari": "Jumat", "jam": "13:40 - 15:20", "matkul": "Bahasa Inggris Profesi", "dosen": "Genta Ulina Hutagalung, S.Pd., M.Pd.", "ruang": "Teori 5 Lt. 2 B.Inggris" },
+  { "hari": "Jumat", "jam": "15:20 - 16:10", "matkul": "Kecerdasan Buatan", "dosen": "Desti Destiansari Istinabiyah, S.Si., M.Kom.", "ruang": "Teori 5 Lt. 2 B.Inggris" },
+  { "hari": "Jumat", "jam": "16:30 - 18:10", "matkul": "Kecerdasan Buatan", "dosen": "Desti Destiansari Istinabiyah, S.Si., M.Kom.", "ruang": "Teori 5 Lt. 2 B.Inggris" }

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Panel - Quintall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#fff;--surface:#f8fafc;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--primary:#0284c7;--accent:#e0f2fe;}
+        [data-theme="dark"]{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#f8fafc;--muted:#94a3b8;--primary:#38bdf8;--accent:#0369a1;}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:40px 20px;}
+        .wrap{max-width:1150px;margin:0 auto;}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:1px solid var(--border);padding-bottom:20px;}
+        h1{margin:0;font-size:20px;font-weight:700;} p{margin:2px 0 0 0;color:var(--muted);font-size:13px;}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:30px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        table{width:100%;min-width:650px;border-collapse:collapse;text-align:left;font-size:13px;}
+        th,td{padding:10px 12px;border-bottom:1px solid var(--border);}
+        th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;background:transparent;}
+        code{background:#f1f5f9;padding:2px 5px;border-radius:4px;border:1px solid var(--border);color:var(--primary);}
+        [data-theme="dark"] code{background:#0f172a;color:var(--primary);}
+        input,select,button{padding:8px 12px;margin-right:8px;border:1px solid var(--border);border-radius:6px;font-family:inherit;}
+        button{background:var(--primary);color:#fff;border:none;cursor:pointer;font-weight:600;}
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px;}
+        .modal-overlay.show{display:flex;}
+        .modal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;max-width:380px;width:100%;padding:20px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);position:relative;text-align:center;}
+        .modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <div>
+            <h1>Kelola Panel</h1>
+            <p><a href="/" style="color:var(--primary);text-decoration:none;">← Kembali ke Jadwal</a></p>
+        </div>
+    </header>
+    <div class="card">
+        <h2 style="margin:0 0 14px 0;font-size:16px;">Kelola Tugas</h2>
+        <form action="/tambah-tugas" method="POST" style="margin-bottom:20px;">
+            <select name="matkul" required>
+                <% matkulList.forEach(m => { %>
+                    <option value="<%= m %>"><%= m %></option>
+                <% }); %>
+            </select>
+            <input type="text" name="deskripsi" placeholder="Deskripsi tugas..." required style="width:250px;">
+            <input type="date" name="deadlineDate" required>
+            <input type="time" name="deadlineTime" required value="23:59">
+            <button type="submit">Tambah Tugas</button>
+        </form>
+        <table>
+            <thead>
+                <tr><th>Mata Kuliah</th><th>Deskripsi</th><th>Deadline</th><th>Status</th><th>Aksi</th></tr>
+            </thead>
+            <tbody>
+                <% tasks.forEach((t, i) => { 
+                    const d = new Date(t.deadline);
+                    const isPassed = d < now;
+                %>
+                    <tr>
+                        <td><strong><%= t.matkul %></strong></td>
+                        <td><%= t.deskripsi %></td>
+                        <td><code><%= t.deadline %></code></td>
+                        <td>
+                            <% if (t.selesai) { %>
+                                <span style="background:#f1f5f9;color:#64748b;padding:2px 6px;border-radius:4px;font-weight:600;font-size:11px;">SELESAI ✅</span>
+                            <% } else if (isPassed) { %>
+                                <span style="background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:4px;font-weight:600;font-size:11px;">LEWAT WAKTU</span>
+                            <% } else { %>
+                                <span style="background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;font-weight:600;font-size:11px;">AKTIF</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (t.selesai) { %>
+                                <form action="/selesai-tugas" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id" value="<%= i %>">
+                                    <input type="hidden" name="status" value="0">
+                                    <button type="submit" style="background:none;border:none;padding:0;color:var(--muted);font-size:12px;margin-right:8px;cursor:pointer;font-family:inherit;">Batal Selesai</button>
+                                </form>
+                            <% } else { %>
+                                <form action="/selesai-tugas" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id" value="<%= i %>">
+                                    <input type="hidden" name="status" value="1">
+                                    <button type="submit" style="background:none;border:none;padding:0;color:var(--primary);font-weight:600;font-size:12px;margin-right:8px;cursor:pointer;font-family:inherit;">Tandai Selesai</button>
+                                </form>
+                            <% } %>
+                            <button type="button" onclick="confirmDelete(<%= i %>)" style="background:none;border:none;padding:0;color:#ef4444;font-size:12px;cursor:pointer;font-family:inherit;">Hapus</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+        <div>
+            <h2 style="margin:0 0 4px 0;font-size:16px;">Kelola Layanan Bot Telegram</h2>
+            <p style="color:var(--muted);font-size:13px;margin:0;">
+                Status Bot Saat Ini: 
+                <% if (isMaintenance) { %>
+                    <span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-weight:700;font-size:12px;">MAINTENANCE</span>
+                <% } else { %>
+                    <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-weight:700;font-size:12px;">RUNNING</span>
+                <% } %>
+            </p>
+        </div>
+        <form action="/toggle-maintenance" method="POST" style="margin:0;">
+            <button type="submit" style="background:<%= isMaintenance ? '#16a34a' : '#dc2626' %>;padding:9px 16px;">
+                <%= isMaintenance ? 'Matikan Maintenance (Running Bot)' : 'Aktifkan Mode Maintenance' %>
+            </button>
+        </form>
+    </div>
+    <div class="card">
+        <h2 style="margin:0 0 8px 0;font-size:16px;">Import Jadwal Mata Kuliah</h2>
+        <p style="color:var(--muted);font-size:13px;margin:0 0 16px 0;">Unggah file <code>.json</code> berisi daftar jadwal mata kuliah baru.</p>
+        <form action="/import-jadwal" method="POST" enctype="multipart/form-data" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="file" name="jadwal" accept="application/json" required style="background:var(--bg);color:var(--text);padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+            <button type="submit" style="padding:9px 16px;">Import File JSON</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="actionModal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-card">
+        <h3 id="modalTitle" style="margin:0 0 8px 0;font-size:16px;">Pemberitahuan</h3>
+        <p id="modalText" style="color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 16px 0;"></p>
+        <div id="modalFooter" style="display:flex;gap:8px;justify-content:center;"></div>
+    </div>
+</div>
+
+<script>
+function showModal(title, text, footerHtml) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalText').textContent = text;
+    document.getElementById('modalFooter').innerHTML = footerHtml || '<button onclick="closeModal()" style="padding:8px 20px;">Tutup</button>';
+    document.getElementById('actionModal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('actionModal').classList.remove('show');
+}
+
+function confirmDelete(id) {
+    showModal(
+        'Konfirmasi Hapus',
+        'Apakah Anda yakin ingin menghapus tugas ini?',
+        `<button onclick="closeModal()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;">Batal</button><form action="/hapus-tugas" method="POST" style="display:inline;"><input type="hidden" name="id" value="${id}"><button type="submit" style="background:#ef4444;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;">Ya, Hapus</button></form>`
+    );
+}
+
+(function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    if (msg) {
+        let title = 'Pemberitahuan';
+        let text = '';
+        if (msg === 'tambah_sukses') {
+            title = 'Tugas Ditambahkan!';
+            text = 'Tugas baru berhasil disimpan ke sistem.';
+        } else if (msg === 'hapus_sukses') {
+            title = 'Tugas Dihapus!';
+            text = 'Tugas berhasil dihapus dari daftar.';
+        } else if (msg === 'status_sukses') {
+            title = 'Status Diperbarui!';
+            text = 'Status penyelesaian tugas telah diperbarui.';
+        } else if (msg === 'import_sukses') {
+            title = 'Import Berhasil!';
+            text = 'Jadwal mata kuliah baru berhasil diimport ke sistem!';
+        } else if (msg === 'import_gagal') {
+            title = 'Import Gagal!';
+            text = 'Format file JSON tidak valid! Pastikan file berupa array data jadwal.';
+        } else if (msg === 'maint_on') {
+            title = 'Maintenance Diaktifkan!';
+            text = 'Bot Telegram sekarang dalam Mode Maintenance. Pengguna bot akan mendapatkan pesan pemeliharaan saat mengetik perintah.';
+        } else if (msg === 'maint_off') {
+            title = 'Bot Aktif Kembali!';
+            text = 'Mode Maintenance telah dimatikan. Bot Telegram siap melayani perintah pengguna.';
+        }
+        if (text) {
+            showModal(title, text);
+            history.replaceState(null, '', window.location.pathname);
+        }
+    }
+})();
+</script>
+</body>
+</html>
