@@ -4,6 +4,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { getTasks, saveTasks } = require('./tasks');
 const multer = require('multer');
 const upload = multer({
@@ -34,6 +36,52 @@ function saveJadwal(data) {
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
+
+// Security: Disable X-Powered-By header
+app.disable('x-powered-by');
+
+// Security: Helmet middleware with CSP for Google Fonts
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: []
+        }
+    },
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    xContentTypeOptions: true,
+    xFrameOptions: { action: 'deny' }
+}));
+
+// Security: Rate limiter for login endpoint
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // 5 attempts per window
+    message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+// Security: Restrict HTTP methods
+app.use((req, res, next) => {
+    const allowedMethods = ['GET', 'POST', 'HEAD'];
+    if (!allowedMethods.includes(req.method)) {
+        return res.status(405).send('Method Not Allowed');
+    }
+    next();
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -143,16 +191,34 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', loginLimiter, (req, res) => {
     const { password } = req.body;
+    
+    // Input validation
+    if (!password || typeof password !== 'string' || password.length > 100) {
+        return res.send(`<script>alert('Input tidak valid!'); window.location.href='/login';</script>`);
+    }
+    
     if (password === process.env.ADMIN_PASSWORD) {
         const token = crypto.randomBytes(32).toString('hex');
         adminSessions[token] = Date.now();
         updateActivity();
-        const secureFlag = req.secure || req.headers['x-forwarded-proto'] === 'https' ? '; Secure' : '';
-        res.setHeader('Set-Cookie', `quintall_auth=${token}; Path=/; HttpOnly; SameSite=Lax${secureFlag}`);
+        
+        // Enhanced cookie security: HttpOnly, Secure (for HTTPS), SameSite=Strict
+        const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
+        const cookieOptions = [
+            `quintall_auth=${token}`,
+            'Path=/',
+            'HttpOnly',
+            'SameSite=Strict',
+            isSecure ? 'Secure' : '',
+            `Max-Age=${SESSION_TTL_MS / 1000}` // Match session TTL
+        ].filter(Boolean).join('; ');
+        
+        res.setHeader('Set-Cookie', cookieOptions);
         return res.redirect('/tugas');
     }
+    
     res.send(`<script>alert('Password salah!'); window.location.href='/login';</script>`);
 });
 
