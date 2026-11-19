@@ -42,7 +42,19 @@ app.disable('x-powered-by');
 
 // Security: Helmet middleware with CSP for Google Fonts
 app.use(helmet({
-    contentSecurityPolicy: false, // Temporarily disabled for debugging
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: []
+        }
+    },
     hsts: {
         maxAge: 31536000,
         includeSubDomains: true,

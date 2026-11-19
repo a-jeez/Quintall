@@ -58,10 +58,10 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
             <div class="dropdown">
-                <button onclick="toggleMenu()" class="menu-btn" id="menuBtn" aria-label="Menu">⋮</button>
+                <button type="button" onclick="toggleMenu()" class="menu-btn" id="menuBtn" aria-label="Menu">⋮</button>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="https://t.me/quintall_bot" target="_blank" rel="noopener">Bot Telegram</a>
-                    <button onclick="showInfo()">About</button>
+                    <button type="button" onclick="showInfo()">About</button>
                     <hr style="border:0;border-top:1px solid var(--border);margin:4px 0;">
                     <% if (isLoggedIn) { %>
                         <a href="/tugas">Kelola Panel</a>
@@ -71,7 +71,7 @@
                     <% } %>
                 </div>
             </div>
-            <button onclick="toggleTheme()" class="menu-btn" id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
+            <button type="button" onclick="toggleTheme()" class="menu-btn" id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
         </div>
     </header>
     <% if (isMaintenance) { %>
